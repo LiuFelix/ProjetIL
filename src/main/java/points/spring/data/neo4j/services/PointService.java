@@ -21,11 +21,11 @@ public class PointService {
 		Iterator<Point> result = points.iterator();
 		while (result.hasNext()) {
 			Point point = result.next();
-			nodes.add(map("weight", point.getWeight(), "label", "source"));
+			nodes.add(map2("id", point.getId(),"lat", point.getX(), "lon", point.getY(),  "label", "source"));
 			int target = i;
 			i++;
 			for (Arc arc : point.getArcs()) {
-				Map<String, Object> end = map("weight", arc.getEnd().getWeight(), "label", "destination");
+				Map<String, Object> end = map("cost", arc.getCost(), "label", "destination");
 				int source = nodes.indexOf(end);
 				if (source == -1) {
 					nodes.add(end);
@@ -43,13 +43,23 @@ public class PointService {
 		result.put(key2, value2);
 		return result;
 	}
+	
+	private Map<String, Object> map2(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
+		Map<String, Object> result = new HashMap<String, Object>(4);
+		result.put(key1, value1);
+		result.put(key2, value2);
+		result.put(key3, value3);
+		result.put(key4, value4);
+		return result;
+	}
 
 	
 	@Transactional(readOnly = true)
 	public String findByCoord(double lat, double lon){
-		Point result = pointRepository.findByCoord(lat, lon);
-		if (result != null)
-			return "Latitude = " + result.getLat() + " & Longitude = " + result.getLon();
+		long result = -1;
+		result = pointRepository.findByCoord(lat, lon);
+		if (result != -1)
+			return findById(result);
 		else
 			return "No matches !";
 	}
@@ -58,7 +68,7 @@ public class PointService {
 	public String findById(long id){
 		Point result = pointRepository.findById(id);
 		if (result != null)
-			return "Latitude = " + result.getLat() + " & Longitude = " + result.getLon();
+			return "Latitude = " + result.getX() + " & Longitude = " + result.getY();
 		else
 			return "No matches !";
 	}
@@ -80,29 +90,33 @@ public class PointService {
 		Collection<Point> aux = pointRepository.aStar(id1,id2);
 		String result = "";
 		for (Point p : aux) {
-			result += "--> " + p.getId() + " : " + p.getLat() + "," + p.getLon() + '\n';
+			result += "--> " + p.getId() + " : " + p.getX() + "," + p.getY() + '\n';
 		}
 		return result;
 	}
 	
 	@Transactional(readOnly = true)
 	public Map<String, Object> dijkstra(long id1, long id2) {
-		Collection<Point> result = pointRepository.aStar(id1,id2);
+		Collection<Point> result = pointRepository.dijkstra(id1,id2);
 		return toD3Format(result);
-	}
-	
-	@Transactional(readOnly = true)
-	public void  createGraph() {
-		pointRepository.createNodes();
-	}
-	
-	@Transactional(readOnly = true)
-	public void  createDiag1() {
-		pointRepository.createDiag1();
 	}
 
 	@Transactional(readOnly = true)
-	public void  createNodes() {
-		pointRepository.createNodes();
+	public String dijkstraString(long id1, long id2) {
+		Collection<Point> aux = pointRepository.dijkstra(id1,id2);
+		String result = "";
+		for (Point p : aux) {
+			result += "--> " + p.getId() + " : " + p.getX() + "," + p.getY() + '\n';
+		}
+		return result;
 	}
+	
+	@Transactional(readOnly = true)
+	public Map<String, Object> dijkstraCoord(double lat1, double lon1, double lat2, double lon2) {
+		long id1 = pointRepository.findByCoord(lat1, lon1);
+		long id2 = pointRepository.findByCoord(lat2, lon2);
+		Collection<Point> result = pointRepository.dijkstra(id1, id2);
+		return toD3Format(result);
+	}
+	
 }

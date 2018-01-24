@@ -18,18 +18,6 @@ public class PointController {
 	public PointController(PointService pointService) {
 		this.pointService = pointService;
 	}
-
-	@RequestMapping("/createNodes")
-	public String createNodes() {
-		pointService.createNodes();
-		return "C'est bon pour les noeuds !";
-	}
-	
-	@RequestMapping("/createDiag1")
-	public String createDiag1() {
-		pointService.createDiag1();
-		return "C'est bon";
-	}
 	
 	@RequestMapping("/getFromCoord")
 	public String findByCoord(@RequestParam(value = "lat",required = true) double lat, @RequestParam(value = "lon",required = true) double lon) {
@@ -57,7 +45,18 @@ public class PointController {
 	}
 	
 	@RequestMapping("/dijkstra")
-	public String dijkstra(@RequestParam(value = "start",required = true) long id1, @RequestParam(value = "end",required = true) long id2) {
-		return pointService.aStarString(id1,id2);
+	public Map<String, Object> dijkstra(@RequestParam(value = "start",required = true) long id1, @RequestParam(value = "end",required = true) long id2) {
+		return pointService.dijkstra(id1,id2);
+	}
+	
+	@RequestMapping("/dijkstraS")
+	public String dijkstraString(@RequestParam(value = "start",required = true) long id1, @RequestParam(value = "end",required = true) long id2) {
+		return pointService.dijkstraString(id1,id2);
+	}
+	
+	@RequestMapping("/dijkstraCoord")
+	public Map<String, Object> dijkstraCoord(@RequestParam(value = "slat",required = true) double lat1, @RequestParam(value = "slon",required = true) double lon1,
+			@RequestParam(value = "elat",required = true) double lat2, @RequestParam(value = "elon",required = true) double lon2) {
+		return pointService.dijkstraCoord(lat1,lon1,lat2,lon2);
 	}
 }

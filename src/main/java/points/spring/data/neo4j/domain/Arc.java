@@ -12,21 +12,40 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-@RelationshipEntity(type = "near")
+@RelationshipEntity(type = "NORTH,SOUTH,EAST,WEST,NORTHEAST,NORTHWEST,SOUTHEAST,SOUTHWEST")
 public class Arc {
 
 	@GraphId
 	private Long id;
 
-	private Collection<Double> arcs = new ArrayList<>();
+	private Collection<String> arcs = new ArrayList<>();
 
 	@StartNode
 	private Point start;
 
 	@EndNode
 	private Point end;
-
+	
+	private double cost;
+	private double distance;
+	
 	public Arc() {
+	}
+
+	public double getCost() {
+		return cost;
+	}
+
+	public void setCost(double cost) {
+		this.cost = cost;
+	}
+
+	public double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(double distance) {
+		this.distance = distance;
 	}
 
 	public Arc(Point start, Point end) {
@@ -38,7 +57,7 @@ public class Arc {
 		return id;
 	}
 
-	public Collection<Double> getArcs() {
+	public Collection<String> getArcs() {
 		return arcs;
 	}
 
@@ -50,7 +69,7 @@ public class Arc {
 		return end;
 	}
 
-	public void addArcDistance(double distance) {
-		this.arcs.add(distance);
+	public void addArcDistance(String type) {
+		this.arcs.add(type);
 	}
 }

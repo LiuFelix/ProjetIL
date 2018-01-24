@@ -1,7 +1,6 @@
 package points.spring.data.neo4j.domain;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -17,21 +16,21 @@ public class Point {
 	@GraphId
 	private Long id;
 
-	private double lat;
-	private double lon;
-	private double weight;
+	//AJOUT COST, DISTANCE
+	private double x;
+	private double y;
 
-	@Relationship(type = "near")
-	private List<Arc> arcs = new ArrayList<>();
+	//AJOUT differents types de relations
+	@Relationship(type = "NORTH,SOUTH,EAST,WEST,NORTHEAST,NORTHWEST,SOUTHEAST,SOUTHWEST")
+	private List<Arc> arcs = new ArrayList<>();	
 
 	public Point() {
 	}
 
-	public Point(double lat, double lon, double weight) {
+	public Point(double lat, double lon) {
 
-		this.lat = lat;
-		this.lon = lon;
-		this.weight = weight;
+		this.x = lat;
+		this.y = lon;
 	}
 
 	public Long getId() {
@@ -42,23 +41,22 @@ public class Point {
 		this.id = id;
 	}
 
-	public double getLat() {
-		return lat;
+
+	public double getX() {
+		return x;
 	}
 
-	public double getLon() {
-		return lon;
+	public double getY() {
+		return y;
 	}
 
-	public double getWeight() {
-		return weight;
-	}
-	
-	public Collection<Arc> getArcs() {
+	public List<Arc> getArcs() {
 		return arcs;
 	}
 
-	public void addArc(Arc arc) {
-		this.arcs.add(arc);
+	public void setArcs(List<Arc> arcs) {
+		this.arcs = arcs;
 	}
+
+	
 }
